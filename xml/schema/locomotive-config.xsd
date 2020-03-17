@@ -63,6 +63,21 @@
         
         <xs:element name="locoaddress" type="LocoAddressType" minOccurs="0" maxOccurs="1" />
         
+        <xs:element name="speedStepMode" minOccurs="0" maxOccurs="1">
+          <xs:simpleType>
+            <xs:restriction base="xs:token" >
+              <!-- NOTE: keep these up to date with java/src/jmri/SpeedStepMode.java -->
+              <xs:enumeration value="14"/>
+              <xs:enumeration value="27"/>
+              <xs:enumeration value="28"/>
+              <xs:enumeration value="motorola_28"/>
+              <xs:enumeration value="128"/>
+              <xs:enumeration value="tmcc_32"/>
+              <xs:enumeration value="incremental"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+
         <xs:element name="functionlabels" type="FunctionLabelType" minOccurs="0" maxOccurs="1" />
         
         <xs:element name="soundlabels" type="SoundLabelType" minOccurs="0" maxOccurs="1" />

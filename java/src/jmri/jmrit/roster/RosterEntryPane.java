@@ -10,8 +10,12 @@ import java.awt.event.FocusListener;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
+
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,6 +27,7 @@ import javax.swing.SpinnerNumberModel;
 import jmri.DccLocoAddress;
 import jmri.InstanceManager;
 import jmri.LocoAddress;
+import jmri.SpeedStepMode;
 import jmri.jmrit.DccLocoAddressSelector;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
@@ -43,6 +48,7 @@ public class RosterEntryPane extends javax.swing.JPanel {
     JTextField roadName = new JTextField(30);
     JTextField maxSpeed = new JTextField(3);
     JSpinner maxSpeedSpinner = new JSpinner(); // percentage stored as fraction
+    JComboBox<String> speedStepBox;
 
     JTextField roadNumber = new JTextField(30);
     JTextField mfg = new JTextField(30);
@@ -62,11 +68,17 @@ public class RosterEntryPane extends javax.swing.JPanel {
     JLabel decoderFamily = new JLabel();
     JTextArea decoderComment = new JTextArea(3, 30);
     JScrollPane decoderCommentScroller = new JScrollPane(decoderComment, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    GridBagLayout gbLayout = new GridBagLayout();
 
     Component pane = null;
     RosterEntry re = null;
 
     final ResourceBundle rb = ResourceBundle.getBundle("jmri.jmrit.roster.JmritRosterBundle");
+
+    private void addWithConstraints(Component component, GridBagConstraints constraints) {
+        gbLayout.setConstraints(component, constraints);
+        super.add(component);
+    }
 
     public RosterEntryPane(RosterEntry r) {
 
@@ -161,7 +173,6 @@ public class RosterEntryPane extends javax.swing.JPanel {
 
         // New GUI to allow multiline Comment and Decoder Comment fields
         //Set up constraints objects for convenience in GridBagLayout alignment
-        GridBagLayout gbLayout = new GridBagLayout();
         GridBagConstraints cL = new GridBagConstraints();
         GridBagConstraints cR = new GridBagConstraints();
         Dimension minFieldDim = new Dimension(150, 20);
@@ -173,134 +184,107 @@ public class RosterEntryPane extends javax.swing.JPanel {
         cL.ipadx = 3;
         cL.anchor = GridBagConstraints.NORTHWEST;
         cL.insets = new Insets(0, 0, 0, 15);
-        JLabel row0Label = new JLabel(rb.getString("FieldID") + ":");
-        gbLayout.setConstraints(row0Label, cL);
-        super.add(row0Label);
+        addWithConstraints(new JLabel(rb.getString("FieldID") + ":"), cL);
 
         cR.gridx = 1;
         cR.gridy = 0;
         cR.anchor = GridBagConstraints.WEST;
         id.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(id, cR);
-        super.add(id);
+        addWithConstraints(id, cR);
 
         cL.gridy++;
-        JLabel row1Label = new JLabel(rb.getString("FieldRoadName") + ":");
-        gbLayout.setConstraints(row1Label, cL);
-        super.add(row1Label);
+        addWithConstraints(new JLabel(rb.getString("FieldRoadName") + ":"), cL);
 
         cR.gridy = cL.gridy;
         roadName.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(roadName, cR);
-        super.add(roadName);
+        addWithConstraints(roadName, cR);
 
         cL.gridy++;
-        JLabel row2Label = new JLabel(rb.getString("FieldRoadNumber") + ":");
-        gbLayout.setConstraints(row2Label, cL);
-        super.add(row2Label);
+        addWithConstraints(new JLabel(rb.getString("FieldRoadNumber") + ":"), cL);
 
         cR.gridy = cL.gridy;
         roadNumber.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(roadNumber, cR);
-        super.add(roadNumber);
+        addWithConstraints(roadNumber, cR);
 
         cL.gridy++;
-        JLabel row3Label = new JLabel(rb.getString("FieldManufacturer") + ":");
-        gbLayout.setConstraints(row3Label, cL);
-        super.add(row3Label);
+        addWithConstraints(new JLabel(rb.getString("FieldManufacturer") + ":"), cL);
 
         cR.gridy = cL.gridy;
         mfg.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(mfg, cR);
-        super.add(mfg);
+        addWithConstraints(mfg, cR);
 
         cL.gridy++;
-        JLabel row4Label = new JLabel(rb.getString("FieldOwner") + ":");
-        gbLayout.setConstraints(row4Label, cL);
-        super.add(row4Label);
+        addWithConstraints(new JLabel(rb.getString("FieldOwner") + ":"), cL);
 
         cR.gridy = cL.gridy;
         owner.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(owner, cR);
-        super.add(owner);
+        addWithConstraints(owner, cR);
 
         cL.gridy++;
-        JLabel row5Label = new JLabel(rb.getString("FieldModel") + ":");
-        gbLayout.setConstraints(row5Label, cL);
-        super.add(row5Label);
+        addWithConstraints(new JLabel(rb.getString("FieldModel") + ":"), cL);
 
         cR.gridy = cL.gridy;
         model.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(model, cR);
-        super.add(model);
+        addWithConstraints(model, cR);
 
         cL.gridy++;
-        JLabel row6Label = new JLabel(rb.getString("FieldDCCAddress") + ":");
-        gbLayout.setConstraints(row6Label, cL);
-        super.add(row6Label);
+        addWithConstraints(new JLabel(rb.getString("FieldDCCAddress") + ":"), cL);
 
         cR.gridy = cL.gridy;
-        gbLayout.setConstraints(selPanel, cR);
-        super.add(selPanel);
+        addWithConstraints(selPanel, cR);
 
         cL.gridy++;
-        JLabel row7Label = new JLabel(rb.getString("FieldSpeedLimit") + ":");
-        gbLayout.setConstraints(row7Label, cL);
-        super.add(row7Label);
-
+        addWithConstraints(new JLabel(rb.getString("FieldSpeedLimit") + ":"), cL);
         cR.gridy = cL.gridy; // JSpinner is initialised in RosterEntryPane()
-        gbLayout.setConstraints(maxSpeedSpinner, cR);
-        super.add(maxSpeedSpinner);
+        addWithConstraints(maxSpeedSpinner, cR);
 
         cL.gridy++;
-        JLabel row8Label = new JLabel(rb.getString("FieldComment") + ":");
-        gbLayout.setConstraints(row8Label, cL);
-        super.add(row8Label);
+        addWithConstraints(new JLabel("Preferred Speed Step Mode" + ":"), cL); // TODO I18N
+        cR.gridy = cL.gridy;
+        EnumSet<SpeedStepMode> speedStepModes = EnumSet.allOf(SpeedStepMode.class);
+        speedStepModes.remove(SpeedStepMode.UNKNOWN);
+        Vector<String> speedStepModeNames = new Vector<String>();
+        speedStepModeNames.add("None");
+        for(SpeedStepMode mode : speedStepModes) {
+            speedStepModeNames.add(mode.peopleName);
+        }
+        speedStepBox = new JComboBox<String>(speedStepModeNames);
+        addWithConstraints(speedStepBox, cR);
+
+        cL.gridy++;
+        addWithConstraints(new JLabel(rb.getString("FieldComment") + ":"), cL);
 
         cR.gridy = cL.gridy;
         commentScroller.setMinimumSize(minScrollerDim);
-        gbLayout.setConstraints(commentScroller, cR);
-        super.add(commentScroller);
+        addWithConstraints(commentScroller, cR);
 
         cL.gridy++;
-        JLabel row9Label = new JLabel(rb.getString("FieldDecoderFamily") + ":");
-        gbLayout.setConstraints(row9Label, cL);
-        super.add(row9Label);
+        addWithConstraints(new JLabel(rb.getString("FieldDecoderFamily") + ":"), cL);
 
         cR.gridy = cL.gridy;
         decoderFamily.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(decoderFamily, cR);
-        super.add(decoderFamily);
+        addWithConstraints(decoderFamily, cR);
 
         cL.gridy++;
-        JLabel row10Label = new JLabel(rb.getString("FieldDecoderModel") + ":");
-        gbLayout.setConstraints(row10Label, cL);
-        super.add(row10Label);
+        addWithConstraints(new JLabel(rb.getString("FieldDecoderModel") + ":"), cL);
 
         cR.gridy = cL.gridy;
         decoderModel.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(decoderModel, cR);
-        super.add(decoderModel);
+        addWithConstraints(decoderModel, cR);
 
         cL.gridy++;
-        JLabel row11Label = new JLabel(rb.getString("FieldDecoderComment") + ":");
-        gbLayout.setConstraints(row11Label, cL);
-        super.add(row11Label);
+        addWithConstraints(new JLabel(rb.getString("FieldDecoderComment") + ":"), cL);
 
         cR.gridy = cL.gridy;
         decoderCommentScroller.setMinimumSize(minScrollerDim);
-        gbLayout.setConstraints(decoderCommentScroller, cR);
-        super.add(decoderCommentScroller);
+        addWithConstraints(decoderCommentScroller, cR);
 
         cL.gridy++;
-        JLabel row13Label = new JLabel(rb.getString("FieldDateUpdated") + ":");
-        gbLayout.setConstraints(row13Label, cL);
-        super.add(row13Label);
+        addWithConstraints(new JLabel(rb.getString("FieldDateUpdated") + ":"), cL);
 
         cR.gridy = cL.gridy;
         dateUpdated.setMinimumSize(minFieldDim);
-        gbLayout.setConstraints(dateUpdated, cR);
-        super.add(dateUpdated);
+        addWithConstraints(dateUpdated, cR);
     }
 
     double maxSet;
@@ -403,6 +387,12 @@ public class RosterEntryPane extends javax.swing.JPanel {
         maxSet = (Double) maxSpeedSpinner.getValue();
         log.debug("maxSet saved: {}", maxSet);
         r.setMaxSpeedPCT((int) Math.round(100 * maxSet));
+        String speedStepModeName = (String)speedStepBox.getSelectedItem();
+        if(speedStepModeName.equals("None")) {
+            r.setSpeedStepMode(SpeedStepMode.UNKNOWN);
+        } else {
+            r.setSpeedStepMode(SpeedStepMode.getByPeopleName(speedStepModeName));
+        }
         log.debug("maxSet read from config: {}", r.getMaxSpeedPCT());
         r.setDecoderFamily(decoderFamily.getText());
         r.setDecoderModel(decoderModel.getText());

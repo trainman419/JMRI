@@ -594,15 +594,30 @@ abstract public class AbstractThrottleManager implements ThrottleManager {
      */
     public void notifyThrottleKnown(DccThrottle throttle, LocoAddress addr) {
         log.debug("notifyThrottleKnown for {}", addr);
+
+        SpeedStepMode speedStepMode = SpeedStepMode.UNKNOWN;
+        ArrayList<WaitingThrottle> a = throttleListeners.get(addr);
+        if(a != null) {
+            for(WaitingThrottle w : a) {
+                if(w.re != null && w.re.getSpeedStepMode() != SpeedStepMode.UNKNOWN) {
+                    speedStepMode = w.re.getSpeedStepMode();
+                }
+            }
+        }
+
         Addresses ads = null;
         if (!addressThrottles.containsKey(addr)) {
             log.debug("Address {} doesn't already exists so will add",addr);
             ads = new Addresses(throttle);
             addressThrottles.put(addr, ads);
+
+            if(speedStepMode != SpeedStepMode.UNKNOWN) {
+                throttle.setSpeedStepMode(speedStepMode);
+            }
         } else {
             addressThrottles.get(addr).setThrottle(throttle);
         }
-        ArrayList<WaitingThrottle> a = throttleListeners.get(addr);
+
         if (a == null) {
             log.debug("notifyThrottleKnown with zero-length listeners: {}", addr);
         } else {

@@ -38,19 +38,19 @@ public class DCCppCommandStation implements jmri.CommandStation {
     }
 
     public void setBaseStationType(String s) {
- baseStationType = s;
+        baseStationType = s;
     }
     
     public String getBaseStationType() {
- return baseStationType;
+        return baseStationType;
     }
 
     public void setCodeBuildDate(String s) {
- codeBuildDate = s;
+        codeBuildDate = s;
     }
 
     public String getCodeBuildDate() {
- return codeBuildDate;
+        return codeBuildDate;
     }
 
     /**
@@ -58,12 +58,12 @@ public class DCCppCommandStation implements jmri.CommandStation {
      * and software version.
      */
     protected void setCommandStationInfo(DCCppReply l) {
- // V1.0 Syntax
- //String syntax = "iDCC\\+\\+\\s+BASE\\s+STATION\\s+v([a-zA-Z0-9_.]+):\\s+BUILD\\s+((\\d+\\s\\w+\\s\\d+)\\s+(\\d+:\\d+:\\d+))";
- // V1.1 Syntax
- //String syntax = "iDCC\\+\\+BASE STATION FOR ARDUINO \\b(\\w+)\\b \\/ (ARDUINO|POLOLU\\sMC33926) MOTOR SHIELD: BUILD ((\\d+\\s\\w+\\s\\d+)\\s+(\\d+:\\d+:\\d+))";
- // V1.0/V1.1 Simplified
- //String syntax = "iDCC\\+\\+(.*): BUILD (.*)";
+        // V1.0 Syntax
+        // String syntax = "iDCC\\+\\+\\s+BASE\\s+STATION\\s+v([a-zA-Z0-9_.]+):\\s+BUILD\\s+((\\d+\\s\\w+\\s\\d+)\\s+(\\d+:\\d+:\\d+))";
+        // V1.1 Syntax
+        // String syntax = "iDCC\\+\\+BASE STATION FOR ARDUINO \\b(\\w+)\\b \\/ (ARDUINO|POLOLU\\sMC33926) MOTOR SHIELD: BUILD ((\\d+\\s\\w+\\s\\d+)\\s+(\\d+:\\d+:\\d+))";
+        // V1.0/V1.1 Simplified
+        // String syntax = "iDCC\\+\\+(.*): BUILD (.*)";
         // V1.2.1 Syntax
         // String syntax = "iDCC++ BASE STATION FOR ARDUINO \\b(\\w+)\\b \\/ (ARDUINO|POLOLU\\sMC33926) MOTOR SHIELD: ((\\d+\\s\\w+\\s\\d+)\\s+(\\d+:\\d+:\\d+))";
         // Changes from v1.1: space between "DCC++" and "BASE", and "BUILD" is removed.
@@ -114,7 +114,7 @@ public class DCCppCommandStation implements jmri.CommandStation {
      * DCC++ command station does provide Ops Mode.
      */
     public boolean isOpsModePossible() {
- return true;
+        return true;
     }
 
     // A few utility functions

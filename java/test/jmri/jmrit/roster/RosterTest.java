@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JComboBox;
+import jmri.SpeedStepMode;
 import jmri.jmrit.roster.swing.RosterEntryComboBox;
 import jmri.util.FileUtil;
 import jmri.util.JUnitUtil;
@@ -266,6 +267,13 @@ public class RosterTest {
         Assert.assertEquals("search for 0 ", 0, t.matchingList(null, "321", null, null, null, null, null).size());
         Assert.assertEquals("search for 1 ", 1, t.matchingList("UP", null, null, null, null, null, null).size());
         Assert.assertEquals("search for 3 ", 3, t.matchingList(null, "123", null, null, null, null, null).size());
+
+        RosterEntry e = t.matchingList("UP", null, null, null, null, null, null).get(0);
+        Assert.assertEquals("Loaded correct ID", "Ben", e.getId());
+        Assert.assertEquals("Loaded correct road number", "123", e.getRoadNumber());
+        Assert.assertEquals("Loaded correct road name", "UP", e.getRoadName());
+        Assert.assertEquals("Loaded correct speed step mode", SpeedStepMode.NMRA_DCC_28, e.getSpeedStepMode());
+        Assert.assertEquals("Loaded correct attribute", "value b", e.getAttribute("key b"));
     }
 
     @Test
@@ -384,7 +392,7 @@ public class RosterTest {
         Assert.assertEquals(0.25,rp.getThrottleSetting(125,true),0.0);
     }
 
-   @Test
+    @Test
     public void testProfileTwoPointReverseGetThrottleSetting() {
         RosterEntry r = new RosterEntry();
         RosterSpeedProfile rp = new RosterSpeedProfile(r);

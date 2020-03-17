@@ -1,5 +1,7 @@
 package jmri;
 
+import java.util.EnumSet;
+
 import org.jdom2.Element;
 
 /**
@@ -72,4 +74,9 @@ public interface BasicRosterEntry {
 
     public void removePropertyChangeListener(java.beans.PropertyChangeListener l);
 
+    public void setSpeedStepMode(SpeedStepMode speedStepMode);
+
+    public SpeedStepMode getSpeedStepMode();
+
+    public EnumSet<SpeedStepMode> getSupportedSpeedStepModes();
 }

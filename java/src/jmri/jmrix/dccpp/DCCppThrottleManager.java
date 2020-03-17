@@ -50,10 +50,11 @@ public class DCCppThrottleManager extends AbstractThrottleManager implements DCC
             notifyThrottleKnown(throttles.get(address), address);
         } else {
             if (tc.getCommandStation().requestNewRegister(address.getNumber()) == DCCppConstants.NO_REGISTER_FREE) {
-            // TODO: Eventually add something more robust here.
-            log.error("No Register available for Throttle. Address = {}", address);
-            return;
-        }
+                // TODO: Eventually add something more robust here.
+                log.error("No Register available for Throttle. Address = {}", address);
+                failedThrottleRequest(address,"No Register available for Throttle.");
+                return;
+            }
             throttle = new DCCppThrottle((DCCppSystemConnectionMemo) adapterMemo, address, tc);
             throttles.put(address, throttle);
             notifyThrottleKnown(throttle, address);

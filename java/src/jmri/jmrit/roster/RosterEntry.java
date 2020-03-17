@@ -21,6 +21,7 @@ import jmri.BasicRosterEntry;
 import jmri.DccLocoAddress;
 import jmri.InstanceManager;
 import jmri.LocoAddress;
+import jmri.SpeedStepMode;
 import jmri.beans.ArbitraryBean;
 import jmri.jmrit.roster.rostergroup.RosterGroup;
 import jmri.jmrit.symbolicprog.CvTableModel;
@@ -106,6 +107,8 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
     protected String _model = "";
     protected String _dccAddress = "3";
     protected LocoAddress.Protocol _protocol = LocoAddress.Protocol.DCC_SHORT;
+    protected SpeedStepMode _speedStepMode = SpeedStepMode.UNKNOWN;
+    protected EnumSet<SpeedStepMode> _supportedSpeedStepModes = EnumSet.allOf(SpeedStepMode.class);
     protected String _comment = "";
     protected String _decoderModel = "";
     protected String _decoderFamily = "";
@@ -198,6 +201,7 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
         _model = pEntry._model;
         _dccAddress = pEntry._dccAddress;
         _protocol = pEntry._protocol;
+        _speedStepMode = pEntry._speedStepMode;
         _comment = pEntry._comment;
         _decoderModel = pEntry._decoderModel;
         _decoderFamily = pEntry._decoderFamily;
@@ -426,6 +430,21 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
 
     public String getProtocolAsString() {
         return _protocol.getPeopleName();
+    }
+
+    @Override
+    public void setSpeedStepMode(SpeedStepMode speedStepMode) {
+        _speedStepMode = speedStepMode;
+    }
+
+    @Override
+    public SpeedStepMode getSpeedStepMode() {
+        return _speedStepMode;
+    }
+
+    @Override
+    public EnumSet<SpeedStepMode> getSupportedSpeedStepModes() {
+        return _supportedSpeedStepModes;
     }
 
     public void setComment(String s) {
@@ -754,6 +773,13 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
                 warnShortLong(_id);
                 _protocol = LocoAddress.Protocol.DCC_SHORT;
 
+            }
+        }
+        if ((a = e.getAttribute("speedStepMode")) != null) {
+            try {
+                _speedStepMode = SpeedStepMode.getByName(a.getValue());
+            } catch(IllegalArgumentException e4) {
+                _speedStepMode = SpeedStepMode.UNKNOWN;
             }
         }
         if ((a = e.getAttribute("comment")) != null) {
@@ -1152,6 +1178,7 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
         e.setAttribute("owner", getOwner());
         e.setAttribute("model", getModel());
         e.setAttribute("dccAddress", getDccAddress());
+        e.setAttribute("speedStepMode", getSpeedStepMode().name);
         //e.setAttribute("protocol", "" + getProtocol());
         e.setAttribute("comment", getComment());
         e.setAttribute(RosterEntry.MAX_SPEED, (Integer.toString(getMaxSpeedPCT())));
@@ -1255,6 +1282,8 @@ public class RosterEntry extends ArbitraryBean implements RosterObject, BasicRos
                 + _model
                 + " "
                 + _dccAddress
+                + " "
+                + _speedStepMode.name
                 + " "
                 + _comment
                 + " "

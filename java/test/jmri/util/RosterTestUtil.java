@@ -4,6 +4,7 @@ import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import jmri.InstanceManager;
+import jmri.SpeedStepMode;
 import jmri.jmrit.decoderdefn.DecoderFile;
 import jmri.jmrit.decoderdefn.DecoderIndexFile;
 import jmri.jmrit.roster.Roster;
@@ -75,6 +76,7 @@ public class RosterTestUtil {
         e3.setId("UP123");
         e3.setRoadNumber("123");
         e3.setRoadName("UP");
+        e3.setSpeedStepMode(SpeedStepMode.NMRA_DCC_28);
         e3.ensureFilenameExists();
         e3.putAttribute("key b", "value b");
         cvTable = new CvTableModel(null, null);

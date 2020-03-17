@@ -1,9 +1,8 @@
-/* 
+/*
  * DCCppRegisterManager.java
  */
 
 package jmri.jmrix.dccpp;
-
 
 /**
  * Defines and Manages the Registers (~ slots) for DCC++ Base Station
@@ -13,14 +12,15 @@ package jmri.jmrix.dccpp;
  *
  */
 
-/* A few notes on implementation
+/*
+ * A few notes on implementation
  *
- * This class is used by the DCCppCommandStation to allocate/free and keep
- * track of the registers in the BaseStation.  This is assuming the BaseStation
- * doesn't provide its own method of allocating registers.  It would be better
- * if the BaseStation handled this, since there may be more than just JMRI
- * asking for slots.
-*/
+ * This class is used by the DCCppCommandStation to allocate/free and keep track
+ * of the registers in the BaseStation. This is assuming the BaseStation doesn't
+ * provide its own method of allocating registers. It would be better if the
+ * BaseStation handled this, since there may be more than just JMRI asking for
+ * slots.
+ */
 
 public class DCCppRegisterManager {
 
@@ -116,4 +116,3 @@ class DCCppRegister {
     public void allocate() { this.incUserCount(); }
     public void release() { this.decUserCount(); }
 }
-
