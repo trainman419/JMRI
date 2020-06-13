@@ -739,7 +739,7 @@ public class ConditionalTreeEdit extends ConditionalEditBase {
      * Create a new variable Can be invoked by a Variables or Variable node.
      */
     void newVariable() {
-        if (LRouteTableAction.LOGIX_INITIALIZER.equals(_curLogix.getSystemName())) {
+        if (LRouteTableAction.getLogixInitializer().equals(_curLogix.getSystemName())) {
             JOptionPane.showMessageDialog(_editLogixFrame,
                     Bundle.getMessage("Error49"), Bundle.getMessage("ErrorTitle"), // NOI18N
                     JOptionPane.ERROR_MESSAGE);
@@ -934,6 +934,10 @@ public class ConditionalTreeEdit extends ConditionalEditBase {
             if (refList != null) {
                 for (String ref : refList) {
                     Conditional cRef = _conditionalManager.getBySystemName(ref);
+                    if (cRef==null){
+                        log.error("Conditional :{}: not found while updating username",ref);
+                        continue;
+                    }
                     List<ConditionalVariable> varList = cRef.getCopyOfStateVariables();
                     int idx = 0;
                     for (ConditionalVariable var : varList) {

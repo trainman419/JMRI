@@ -208,6 +208,7 @@ public class CircuitBuilderTest {
         if (cpe != null) {
             cpe.dispose();
         }
+        JUnitUtil.deregisterBlockManagerShutdownTask();
         JUnitUtil.tearDown();
     }
     private final static Logger log = LoggerFactory.getLogger(CircuitBuilderTest.class);

@@ -45,12 +45,13 @@ import jmri.configurexml.ConfigXmlManager;
 import jmri.configurexml.XmlAdapter;
 import jmri.jmrit.catalog.ImageIndexEditor;
 import jmri.jmrit.display.Editor;
-import jmri.jmrit.display.PanelMenu;
+import jmri.jmrit.display.EditorManager;
 import jmri.jmrit.display.Positionable;
 import jmri.jmrit.display.PositionablePopupUtil;
 import jmri.jmrit.display.ToolTip;
 import jmri.util.JmriJFrame;
 import jmri.util.SystemType;
+import jmri.util.gui.GuiLafPreferencesManager;
 import jmri.util.swing.JmriColorChooser;
 import org.jdom2.Element;
 import org.slf4j.Logger;
@@ -204,7 +205,7 @@ public class PanelEditor extends Editor implements ItemListener {
                     if (newName == null) {
                         return;  // cancelled
                     }
-                    if (InstanceManager.getDefault(PanelMenu.class).isPanelNameUsed(newName)) {
+                    if (InstanceManager.getDefault(EditorManager.class).contains(newName)) {
                         JOptionPane.showMessageDialog(null, Bundle.getMessage("CanNotRename"), Bundle.getMessage("PanelExist"),
                                 JOptionPane.ERROR_MESSAGE);
                         return;
@@ -214,7 +215,6 @@ public class PanelEditor extends Editor implements ItemListener {
                         ((JFrame) ancestor).setTitle(newName);
                     }
                     editor.setTitle();
-                    InstanceManager.getDefault(PanelMenu.class).renameEditorPanel(editor);
                 }
 
                 ActionListener init(PanelEditor e) {
@@ -412,7 +412,6 @@ public class PanelEditor extends Editor implements ItemListener {
     static class ComboBoxItem {
 
         private final String name;
-        private String bundleName;
 
         protected ComboBoxItem(String n) {
             name = n;
@@ -426,6 +425,7 @@ public class PanelEditor extends Editor implements ItemListener {
         public String toString() {
             // I18N split Bundle name
             // use NamedBeanBundle property for basic beans like "Turnout" I18N
+            String bundleName;
             if (SENSOR.equals(name)) {
                 bundleName = "BeanNameSensor";
             } else if (SIGNAL_HEAD.equals(name)) {
@@ -485,8 +485,9 @@ public class PanelEditor extends Editor implements ItemListener {
     /**
      * Create sequence of panels, etc, for layout: JFrame contains its
      * ContentPane which contains a JPanel with BoxLayout (p1) which contains a
-     * JScollPane (js) which contains the targetPane
-     *
+     * JScollPane (js) which contains the targetPane.
+     * @param name the frame name.
+     * @return the frame.
      */
     public JmriJFrame makeFrame(String name) {
         JmriJFrame targetFrame = new JmriJFrame(name);
@@ -603,17 +604,15 @@ public class PanelEditor extends Editor implements ItemListener {
 
             // Positionable items with defaults or using overrides
             boolean popupSet = false;
-            popupSet |= p.setRotateOrthogonalMenu(popup);
+            popupSet = p.setRotateOrthogonalMenu(popup);
             popupSet |= p.setRotateMenu(popup);
             popupSet |= p.setScaleMenu(popup);
             if (popupSet) {
                 popup.addSeparator();
-                popupSet = false;
             }
             popupSet = p.setEditIconMenu(popup);
             if (popupSet) {
                 popup.addSeparator();
-                popupSet = false;
             }
             popupSet = p.setTextEditMenu(popup);
             if (util != null) {
@@ -632,7 +631,6 @@ public class PanelEditor extends Editor implements ItemListener {
             }
             if (popupSet) {
                 popup.addSeparator();
-                popupSet = false;
             }
             p.setDisableControlMenu(popup);
 
@@ -789,7 +787,7 @@ public class PanelEditor extends Editor implements ItemListener {
         _selectRect = null;
 
         // if not sending MouseClicked, do it here
-        if (jmri.util.swing.SwingSettings.getNonStandardMouseEvent()) {
+        if (InstanceManager.getDefault(GuiLafPreferencesManager.class).isNonStandardMouseEvent()) {
             mouseClicked(event);
         }
         _targetPanel.repaint(); // needed for ToolTip
@@ -981,9 +979,7 @@ public class PanelEditor extends Editor implements ItemListener {
             _multiItemCopyGroup = new ArrayList<>();
             // must make a copy or pasteItem() will hang
             if (_selectionGroup != null) {
-                for (Positionable comp : _selectionGroup) {
-                    _multiItemCopyGroup.add(comp);
-                }
+                _multiItemCopyGroup.addAll(_selectionGroup);
             }
         });
 
@@ -1030,10 +1026,8 @@ public class PanelEditor extends Editor implements ItemListener {
                 addItemViaMouseClick = true;
                 getIconFrame(item.getName());
             }
-//            ComboBoxItem selected;
 
             ActionListener init(ComboBoxItem i) {
-//                selected = i;
                 return this;
             }
         }.init(item);

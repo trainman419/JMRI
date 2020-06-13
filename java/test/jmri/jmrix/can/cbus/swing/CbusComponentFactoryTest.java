@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Test simple functioning of CbusComponentFactory
  *
- * @author	Paul Bender Copyright (C) 2016
+ * @author Paul Bender Copyright (C) 2016
  */
 public class CbusComponentFactoryTest {
 
@@ -37,6 +37,8 @@ public class CbusComponentFactoryTest {
 
     @After
     public void tearDown() {
+        m.dispose();
+        m = null;
         JUnitUtil.tearDown();
         // tc = null;
     }

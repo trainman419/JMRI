@@ -16,7 +16,7 @@ import org.slf4j.*;
  *
  * @author George Warner Copyright (c) 2017-2018
  */
-public class LayoutEditorChecks {
+final public class LayoutEditorChecks {
 
     private final LayoutEditor layoutEditor;
     private final JMenu checkMenu = new JMenu(Bundle.getMessage("CheckMenuTitle"));
@@ -271,7 +271,7 @@ public class LayoutEditorChecks {
         // check all tracks for free connections
         List<String> trackNames = new ArrayList<>();
         for (LayoutTrack layoutTrack : layoutEditor.getLayoutTracks()) {
-            List<LayoutEditor.HitPointType> connections = layoutTrack.checkForFreeConnections();
+            List<HitPointType> connections = layoutTrack.checkForFreeConnections();
             if (!connections.isEmpty()) {
                 // add this track's name to the list of track names
                 trackNames.add(layoutTrack.getName());
@@ -375,7 +375,8 @@ public class LayoutEditorChecks {
             layoutEditor.clearSelectionGroups();
             layoutEditor.amendSelectionGroup(layoutTrack);
 
-            layoutEditor.getLayoutTrackEditors().editLayoutTrack(layoutTrack);
+            // temporary call, should be replaced by access through View class
+            jmri.jmrit.display.layoutEditor.LayoutEditorDialogs.LayoutTrackEditor.makeTrackEditor(layoutTrack, layoutEditor);
         } else {
             layoutEditor.clearSelectionGroups();
         }
@@ -478,7 +479,7 @@ public class LayoutEditorChecks {
         List<PositionablePoint> aatzlts = new ArrayList<>();
         for (PositionablePoint pp : layoutEditor.getPositionablePoints()) {
             // has to be an anchor...
-            if (pp.getType() == PositionablePoint.ANCHOR) {
+            if (pp.getType() == PositionablePoint.PointType.ANCHOR) {
                 // adjacent track segments must be defined...
                 TrackSegment ts1 = pp.getConnect1();
                 TrackSegment ts2 = pp.getConnect2();
@@ -503,6 +504,14 @@ public class LayoutEditorChecks {
                             if (length < 1.0) {
                                 aatzlts.add(pp);
                                 continue;   // so we don't get added again
+                            }
+                            // if track segments isMainline's don't match
+                            if (ts1.isMainline() != ts2.isMainline()) {
+                                continue;   // skip it
+                            }
+                            // if track segments isHidden's don't match
+                            if (ts1.isHidden() != ts2.isHidden()) {
+                                continue;   // skip it
                             }
                             // if either track segment has decorations
                             if (ts1.hasDecorations() || ts2.hasDecorations()) {

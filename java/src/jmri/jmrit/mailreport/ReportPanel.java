@@ -1,7 +1,8 @@
 package jmri.jmrit.mailreport;
 
-import apps.PerformFileModel;
-import apps.StartupActionsManager;
+import jmri.util.startup.PerformFileModel;
+import jmri.util.startup.StartupActionsManager;
+
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.swing.BoxLayout;
@@ -22,11 +24,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
 import jmri.InstanceManager;
 import jmri.profile.Profile;
 import jmri.profile.ProfileManager;
 import jmri.util.MultipartMessage;
 import jmri.util.javaworld.GridLayout2;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -274,10 +278,10 @@ public class ReportPanel extends JPanel {
             }
 
         } catch (IOException ex) {
-            log.error("Error when attempting to send report: " + ex);
+            log.error("Error when attempting to send report: {}", ex);
             sendButton.setEnabled(true);
         } catch (AddressException ex) {
-            log.error("Invalid email address: " + ex);
+            log.error("Invalid email address: {}", ex);
             JOptionPane.showMessageDialog(null, rb.getString("ErrAddress"), rb.getString("ErrTitle"), JOptionPane.ERROR_MESSAGE); // TODO add Bundle to folder and use ErrorTitle key in NamedBeanBundle props
             sendButton.setEnabled(true);
         }
@@ -293,6 +297,10 @@ public class ReportPanel extends JPanel {
         File[] files = source.listFiles();
 
         log.debug("Add directory: {}", directory);
+        if ( files == null ) {
+            log.warn("No files in directory {}",source);
+            return;
+        }
 
         for (File file : files) {
             // if current file is a directory, call recursively
@@ -302,7 +310,7 @@ public class ReportPanel extends JPanel {
                     try {
                         out.putNextEntry(new ZipEntry(directory + file.getName() + "/"));
                     } catch (IOException ex) {
-                        log.error("Exception when adding directory: " + ex);
+                        log.error("Exception when adding directory: {}", ex);
                     }
                     addDirectory(out, file, directory + file.getName() + "/");
                 } else {
@@ -330,9 +338,9 @@ public class ReportPanel extends JPanel {
                     log.debug("Skip file: {}{}", directory, file.getName());
                 }
             } catch (FileNotFoundException ex) {
-                log.error("Exception when adding file: " + ex);
+                log.error("Exception when adding file: {}", ex);
             } catch (IOException ex) {
-                log.error("Exception when adding file: " + ex);
+                log.error("Exception when adding file: {}", ex);
             }
         }
     }

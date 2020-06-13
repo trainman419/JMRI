@@ -16,7 +16,7 @@ import org.junit.Test;
  */
 public class CbusSimulatorTest {
     
-    CbusSimulator t;
+    private CbusSimulator t;
 
     @Test
     public void testCTor() {
@@ -46,7 +46,6 @@ public class CbusSimulatorTest {
         
     }
 
-    // The minimal setup for log4J
     @Before
     public void setUp() {
         JUnitUtil.setUp();

@@ -94,7 +94,7 @@ public class Transit extends AbstractNamedBean {
             mState = state;
             firePropertyChange("state", old, mState);
         } else {
-            log.error("Attempt to set Transit state to illegal value - " + state);
+            log.error("Attempt to set Transit state to illegal value - {}", state);
         }
     }
 
@@ -454,8 +454,7 @@ public class Transit extends AbstractNamedBean {
                     lastIndex--;
                     lastTS = mTransitSectionList.get(lastIndex);
                 } else {
-                    log.warn("Section mismatch " + (firstTS.getSection()).getDisplayName(USERSYS) + " "
-                            + (lastTS.getSection()).getDisplayName(USERSYS));
+                    log.warn("Section mismatch {} {}", (firstTS.getSection()).getDisplayName(USERSYS), (lastTS.getSection()).getDisplayName(USERSYS));
                     return false;
                 }
             }
@@ -463,8 +462,7 @@ public class Transit extends AbstractNamedBean {
         }
         // same Section, check direction
         if (firstTS.getDirection() != lastTS.getDirection()) {
-            log.warn("Direction mismatch " + (firstTS.getSection()).getDisplayName(USERSYS) + " "
-                    + (lastTS.getSection()).getDisplayName(USERSYS));
+            log.warn("Direction mismatch {} {}", (firstTS.getSection()).getDisplayName(USERSYS), (lastTS.getSection()).getDisplayName(USERSYS));
             return false;
         }
         return true;
@@ -481,7 +479,9 @@ public class Transit extends AbstractNamedBean {
      * @param panel the panel to check against
      * @return 0 if all Sections have all required signals or the number of
      *         Sections missing required signals; -1 if the panel is null
+     * @deprecated 4.19.7 Without replacement, as moved to DispatcherFrame, its only usage
      */
+    @Deprecated // for removal 4.19.7 Without replacement, as moved to DispatcherFrame, its only usage
     public int checkSignals(LayoutEditor panel) {
         if (panel == null) {
             log.error("checkSignals called with a null LayoutEditor panel");
@@ -501,8 +501,11 @@ public class Transit extends AbstractNamedBean {
      *
      * @param panel the panel containing Sections to validate
      * @return number of invalid sections or -1 if panel if null
+     * @deprecated 4.19.7 Without replacement, as moved to DispatcherFrame, its only usage
      */
+    @Deprecated // for removal 4.19.7 Without replacement, as moved to DispatcherFrame, its only usage
     public int validateConnectivity(LayoutEditor panel) {
+        jmri.util.Log4JUtil.deprecationWarning(log, "validateConnectivity");
         if (panel == null) {
             log.error("validateConnectivity called with a null LayoutEditor panel");
             return -1;
@@ -537,11 +540,11 @@ public class Transit extends AbstractNamedBean {
                         s.getForwardBlockingSensor().setState(Sensor.ACTIVE);
                     }
                 } else {
-                    log.warn("Missing forward blocking sensor for section " + s.getDisplayName(USERSYS));
+                    log.warn("Missing forward blocking sensor for section {}", s.getDisplayName(USERSYS));
                     numErrors++;
                 }
             } catch (JmriException reason) {
-                log.error("Exception when initializing forward blocking Sensor for Section " + s.getDisplayName(USERSYS));
+                log.error("Exception when initializing forward blocking Sensor for Section {}", s.getDisplayName(USERSYS));
                 numErrors++;
             }
             try {
@@ -550,11 +553,11 @@ public class Transit extends AbstractNamedBean {
                         s.getReverseBlockingSensor().setState(Sensor.ACTIVE);
                     }
                 } else {
-                    log.warn("Missing reverse blocking sensor for section " + s.getDisplayName(USERSYS));
+                    log.warn("Missing reverse blocking sensor for section {}", s.getDisplayName(USERSYS));
                     numErrors++;
                 }
             } catch (JmriException reason) {
-                log.error("Exception when initializing reverse blocking Sensor for Section " + s.getDisplayName(USERSYS));
+                log.error("Exception when initializing reverse blocking Sensor for Section {}", s.getDisplayName(USERSYS));
                 numErrors++;
             }
         }

@@ -1,5 +1,6 @@
 package jmri.jmrix.ztc.ztc611;
 
+import jmri.Turnout;
 import jmri.jmrix.lenz.LenzCommandStation;
 import jmri.jmrix.lenz.XNetInterfaceScaffold;
 import jmri.jmrix.lenz.XNetReply;
@@ -11,9 +12,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Tests for the {@link jmri.jmrix.ztc.ztc611.ZTC611XNetTurnout} class.
  *
- * @author	Bob Jacobsen
+ * @author Bob Jacobsen
  */
 public class ZTC611XNetTurnoutTest extends jmri.jmrix.lenz.XNetTurnoutTest{
+
+    @Override
+    protected void checkClosedOffSent() {
+        // We do not send off messages to the ZTC 611
+    }
+
+    @Override
+    protected void checkThrownOffSent() {
+        // We do not send off messages to the ZTC 611
+    }
 
     // Test the XNetTurnout message sequence.
     @Test
@@ -24,13 +35,15 @@ public class ZTC611XNetTurnoutTest extends jmri.jmrix.lenz.XNetTurnoutTest{
         try {
             t.setCommandedState(jmri.Turnout.CLOSED);
         } catch (Exception e) {
-            log.error("TO exception: " + e);
+            log.error("TO exception: {}", e);
         }
 
-        Assert.assertTrue(t.getCommandedState() == jmri.Turnout.CLOSED);
+        Assert.assertEquals(Turnout.CLOSED, t.getCommandedState());
 
         Assert.assertEquals("on message sent", "52 05 88 DF",
                 lnis.outbound.elementAt(lnis.outbound.size() - 1).toString());
+
+        ((ZTC611XNetTurnout)t).message(lnis.outbound.elementAt(lnis.outbound.size() - 1));
 
         // notify that the command station received the reply
         XNetReply m = new XNetReply();
@@ -43,10 +56,9 @@ public class ZTC611XNetTurnoutTest extends jmri.jmrix.lenz.XNetTurnoutTest{
 
         // no wait here.  The last reply should cause the turnout to
         // set it's state, but it will not cause another reply.
-        Assert.assertTrue(t.getKnownState() == jmri.Turnout.CLOSED);
+        Assert.assertEquals(Turnout.CLOSED, t.getKnownState());
     }
 
-    // The minimal setup for log4J
     @Override
     @Before
     public void setUp() {
@@ -63,9 +75,10 @@ public class ZTC611XNetTurnoutTest extends jmri.jmrix.lenz.XNetTurnoutTest{
     @Override
     @After
     public void tearDown() {
+        t.dispose();
         t = null;
+        lnis.terminateThreads();
         lnis = null;
-        JUnitUtil.clearShutDownManager(); // put in place because AbstractMRTrafficController implementing subclass was not terminated properly
         JUnitUtil.tearDown();
 
     }

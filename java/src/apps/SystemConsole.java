@@ -89,7 +89,7 @@ public final class SystemConsole extends JTextArea {
 
     private int fontStyle = Font.PLAIN;
 
-    private String fontFamily = "Monospaced";  // NOI18N
+    private final String fontFamily = "Monospaced";  // NOI18N
 
     public static final int WRAP_STYLE_NONE = 0x00;
     public static final int WRAP_STYLE_LINE = 0x01;
@@ -196,7 +196,7 @@ public final class SystemConsole extends JTextArea {
                     // return until the frame layout is completed
                     SwingUtilities.invokeAndWait(this::createFrame);
                 } catch (InterruptedException | InvocationTargetException ex) {
-                    log.error("Exception creating system console frame: " + ex);
+                    log.error("Exception creating system console frame: {}", ex);
                 }
             }
             log.debug("Frame created");
@@ -478,10 +478,22 @@ public final class SystemConsole extends JTextArea {
         updateFont(fontFamily, fontStyle, fontSize);
     }
 
+    /**
+     * 
+     * @param family the new font family
+     * @deprecated since 4.19.6 without replacement
+     */
+    @Deprecated
     public void setFontFamily(String family) {
-        updateFont((fontFamily = family), fontStyle, fontSize);
+        // does nothing
     }
 
+    /**
+     * 
+     * @return the current font family
+     * @deprecated since 4.19.6 without replacement
+     */
+    @Deprecated
     public String getFontFamily() {
         return fontFamily;
     }
